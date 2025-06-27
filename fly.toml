@@ -1,4 +1,4 @@
-app = "your-app-name"  # 🟠 Replace with your Fly app name
+app = "quiet-wave-4398"  # 🟠 Replace with your Fly app name
 
 [build]
   dockerfile = "backend/Dockerfile"
