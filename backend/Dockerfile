@@ -6,7 +6,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV PORT 8080
 
-# Set working directory
+# Set working directory in the container
 WORKDIR /app
 
 # Install system dependencies for Playwright
@@ -28,16 +28,18 @@ RUN apt-get update && apt-get install -y \
     libx11-xcb1 \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python deps
-COPY requirements.txt .
+# 👇 Copy requirements.txt from backend folder (since build context is repo root)
+COPY backend/requirements.txt .
+
+# Install Python dependencies
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-# Install Playwright + browser deps
+# Install Playwright and its browser dependencies
 RUN python -m playwright install --with-deps
 
-# Copy backend code
-COPY . .
+# 👇 Copy all backend app files into the container
+COPY backend/ .
 
-# Start app
+# Run the Flask app
 CMD ["python", "app.py"]
