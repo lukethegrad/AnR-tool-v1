@@ -1,4 +1,4 @@
-app = "quiet-wave-4398"  # 🟠 Replace with your Fly app name
+app = "anr-tool-v1"  # 🟠 Replace with your Fly app name
 
 [build]
   dockerfile = "backend/Dockerfile"
