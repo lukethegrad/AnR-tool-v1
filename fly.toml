@@ -2,7 +2,7 @@ app = "anr-tool-v1"
 
 [build]
   dockerfile = "backend/Dockerfile"
-  context = "."  # use current directory as context root
+  context = "."  # Use repo root as build context
 
 [env]
   PORT = "8080"
