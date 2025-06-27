@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from scraper import scrape_tiktok_sound
-from apify_fetcher import fetch_top_videos
+from apify_fetcher import fetch_top_videos_from_apify
+import asyncio
 
 app = Flask(__name__)
 
@@ -18,8 +19,8 @@ def scrape():
         if scraped_data is None:
             return jsonify({"error": "Failed to scrape TikTok sound"}), 500
 
-        # Get top 5 videos from Apify
-        top_videos = fetch_top_videos(sound_url_or_id)
+        # Get top 5 videos from Apify (corrected async call)
+        top_videos = asyncio.run(fetch_top_videos_from_apify(sound_url_or_id))
         if top_videos is None:
             return jsonify({"error": "Failed to fetch top videos"}), 500
 
@@ -35,7 +36,7 @@ def scrape():
         return jsonify({"error": str(e)}), 500
 
 
-# 👇 This is required for Fly.io to detect the server correctly
+# Required for Fly.io to detect the app and serve on port 8080
 if __name__ == "__main__":
     import os
     port = int(os.environ.get("PORT", 8080))
