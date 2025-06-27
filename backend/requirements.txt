@@ -1,0 +1,4 @@
+flask
+httpx
+playwright
+beautifulsoup4
