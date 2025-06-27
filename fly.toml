@@ -1,7 +1,8 @@
-app = "anr-tool-v1"  # 🟠 Replace with your Fly app name
+app = "anr-tool-v1"
 
 [build]
-  dockerfile = "backend/Dockerfile"
+  dockerfile = "Dockerfile"
+  context = "backend"
 
 [env]
   PORT = "8080"
