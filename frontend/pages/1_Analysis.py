@@ -4,7 +4,7 @@ import pandas as pd
 
 # Config
 st.set_page_config(page_title="TikTok Sound Input", layout="centered")
-BACKEND_URL = "https://your-fly-app-name.fly.dev/scrape"  # Replace with actual URL
+BACKEND_URL = "https://anr-tool-v1.fly.dev/scrape"  # ✅ Your actual Fly.io backend URL
 
 # Title
 st.title("🎵 TikTok Sound Metadata Tool")
@@ -26,14 +26,22 @@ with st.form("sound_input_form"):
                         json={"sound_url": sound_input},
                         timeout=30
                     )
+
+                    st.code(f"🔍 Raw response text:\n{response.text}")
+                    st.write(f"Status code: {response.status_code}")
+
                     if response.status_code != 200:
-                        st.error(f"Backend error: {response.json().get('error', 'Unknown error')}")
+                        try:
+                            error_data = response.json()
+                            st.error(f"❌ Backend error: {error_data.get('error', 'Unknown error')}")
+                        except Exception:
+                            st.error("❌ Backend returned non-JSON error.")
                     else:
+                        data = response.json()
                         st.session_state["sound_input"] = sound_input
-                        st.success("Sound input stored successfully.")
+                        st.success("✅ Sound input stored successfully.")
 
                         # Display metadata
-                        data = response.json()
                         st.markdown("### ✅ Metadata Results")
 
                         st.subheader("Sound Title")
@@ -44,11 +52,13 @@ with st.form("sound_input_form"):
 
                         st.subheader("Top 5 Videos")
                         df = pd.DataFrame(data["top_videos"])
-                        df.columns = ["URL", "Views", "Username", "Post Date"]
+                        df.columns = ["Username", "Views", "Post Date"]
                         st.dataframe(df)
 
                 except requests.exceptions.RequestException as e:
-                    st.error(f"Request failed: {e}")
+                    st.error(f"❌ Request failed: {e}")
+                except ValueError as json_error:
+                    st.error(f"❌ JSON decode failed: {json_error}")
 
 # Fallback display for stored input
 if "sound_input" in st.session_state and not submitted:
