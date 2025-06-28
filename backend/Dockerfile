@@ -9,7 +9,7 @@ ENV PORT 8080
 # Set working directory in the container
 WORKDIR /app
 
-# Install system dependencies for Playwright
+# Install system dependencies for Playwright + Chromium
 RUN apt-get update && apt-get install -y \
     curl \
     wget \
@@ -26,20 +26,26 @@ RUN apt-get update && apt-get install -y \
     libxcomposite1 \
     libxext6 \
     libx11-xcb1 \
+    fonts-liberation \
+    libappindicator3-1 \
+    xdg-utils \
     && rm -rf /var/lib/apt/lists/*
 
-# 👇 Copy requirements.txt from backend folder (since build context is repo root)
+# 👇 Copy requirements.txt from backend folder (build context = repo root)
 COPY backend/requirements.txt .
 
 # Install Python dependencies
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-# Install Playwright and its browser dependencies
-RUN python -m playwright install --with-deps
+# Install Playwright and Chromium browser
+RUN pip install playwright && playwright install chromium
 
-# 👇 Copy all backend app files into the container
+# 👇 Copy the rest of the backend app
 COPY backend/ .
+
+# Expose port for Fly
+EXPOSE 8080
 
 # Run the Flask app
 CMD ["python", "app.py"]
